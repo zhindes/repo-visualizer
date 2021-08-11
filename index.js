@@ -1388,22 +1388,22 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(message + os2.EOL);
     }
     exports2.info = info2;
-    function startGroup2(name) {
+    function startGroup(name) {
       command_1.issue("group", name);
     }
-    exports2.startGroup = startGroup2;
-    function endGroup2() {
+    exports2.startGroup = startGroup;
+    function endGroup() {
       command_1.issue("endgroup");
     }
-    exports2.endGroup = endGroup2;
+    exports2.endGroup = endGroup;
     function group(name, fn) {
       return __awaiter(this, void 0, void 0, function* () {
-        startGroup2(name);
+        startGroup(name);
         let result;
         try {
           result = yield fn();
         } finally {
-          endGroup2();
+          endGroup();
         }
         return result;
       });
@@ -17905,15 +17905,6 @@ var getSortOrder = (item, cachedOrders, i = 0) => {
 // src/index.jsx
 var main = async () => {
   core.info("[INFO] Usage https://github.com/githubocto/repo-visualizer#readme");
-  core.startGroup("Configuration");
-  const username = "repo-visualizer";
-  await (0, import_exec.exec)("git", ["config", "user.name", username]);
-  await (0, import_exec.exec)("git", [
-    "config",
-    "user.email",
-    `${username}@users.noreply.github.com`
-  ]);
-  core.endGroup();
   const rootPath = core.getInput("root_path") || "./";
   const maxDepth = core.getInput("max_depth") || 9;
   const colorEncoding = core.getInput("color_encoding") || "type";
@@ -17930,56 +17921,9 @@ var main = async () => {
   const outputFile = core.getInput("output_file") || "./diagram.svg";
   await import_fs2.default.writeFileSync(outputFile, componentCodeString);
   let doesBranchExist = true;
-  if (branch) {
-    await (0, import_exec.exec)("git", ["fetch"]);
-    try {
-      await (0, import_exec.exec)("git", ["rev-parse", "--verify", branch]);
-      await (0, import_exec.exec)("git", ["checkout", branch]);
-    } catch {
-      doesBranchExist = false;
-      core.info(`Branch ${branch} does not yet exist, creating ${branch}.`);
-      await (0, import_exec.exec)("git", ["checkout", "-b", branch]);
-    }
-  }
-  await (0, import_exec.exec)("git", ["add", outputFile]);
-  const diff = await execWithOutput("git", ["status", "--porcelain", outputFile]);
-  core.info(`diff: ${diff}`);
-  if (!diff) {
-    core.info("[INFO] No changes to the repo detected, exiting");
-    return;
-  }
-  await (0, import_exec.exec)("git", ["commit", "-m", commitMessage]);
-  if (doesBranchExist) {
-    await (0, import_exec.exec)("git", ["push"]);
-  } else {
-    await (0, import_exec.exec)("git", ["push", "--set-upstream", "origin", branch]);
-  }
-  if (branch) {
-    await (0, import_exec.exec)("git", "checkout", "-");
-  }
   console.log("All set!");
 };
 main();
-function execWithOutput(command2, args) {
-  return new Promise((resolve, reject) => {
-    try {
-      (0, import_exec.exec)(command2, args, {
-        listeners: {
-          stdout: function(res2) {
-            core.info(res2.toString());
-            resolve(res2.toString());
-          },
-          stderr: function(res2) {
-            core.info(res2.toString());
-            reject(res2.toString());
-          }
-        }
-      });
-    } catch (e3) {
-      reject(e3);
-    }
-  });
-}
 /*
 object-assign
 (c) Sindre Sorhus

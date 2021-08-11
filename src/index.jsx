@@ -10,18 +10,6 @@ import { Tree } from "./Tree.tsx"
 const main = async () => {
   core.info('[INFO] Usage https://github.com/githubocto/repo-visualizer#readme')
 
-  core.startGroup('Configuration')
-  const username = 'repo-visualizer'
-  await exec('git', ['config', 'user.name', username])
-  await exec('git', [
-    'config',
-    'user.email',
-    `${username}@users.noreply.github.com`,
-  ])
-
-  core.endGroup()
-
-
   const rootPath = core.getInput("root_path") || "./";
   const maxDepth = core.getInput("max_depth") || 9
   const colorEncoding = core.getInput("color_encoding") || "type"
@@ -40,39 +28,6 @@ const main = async () => {
   await fs.writeFileSync(outputFile, componentCodeString)
 
   let doesBranchExist = true
-
-  if (branch) {
-    await exec('git', ['fetch'])
-
-    try {
-      await exec('git', ['rev-parse', '--verify', branch])
-      await exec('git', ['checkout', branch])
-    } catch {
-      doesBranchExist = false
-      core.info(`Branch ${branch} does not yet exist, creating ${branch}.`)
-      await exec('git', ['checkout', '-b', branch])
-    }
-  }
-
-  await exec('git', ['add', outputFile])
-  const diff = await execWithOutput('git', ['status', '--porcelain', outputFile])
-  core.info(`diff: ${diff}`)
-  if (!diff) {
-    core.info('[INFO] No changes to the repo detected, exiting')
-    return
-  }
-
-  await exec('git', ['commit', '-m', commitMessage])
-
-  if (doesBranchExist) {
-    await exec('git', ['push'])
-  } else {
-    await exec('git', ['push', '--set-upstream', 'origin', branch])
-  }
-
-  if (branch) {
-    await exec('git', 'checkout', '-')
-  }
 
   console.log("All set!")
 }
