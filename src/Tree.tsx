@@ -52,8 +52,8 @@ type ProcessedDataItem = {
   children: Array<ProcessedDataItem>;
 };
 const looseFilesId = "__structure_loose_file__";
-const width = 1000;
-const height = 1000;
+const width = 10000;
+const height = 10000;
 const maxChildren = 9000;
 const lastCommitAccessor = (d) => new Date(d.commits?.[0]?.date + "0");
 const numberOfCommitsAccessor = (d) => d?.commits?.length || 0;

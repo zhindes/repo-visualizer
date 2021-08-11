@@ -17448,8 +17448,8 @@ var keepCircleInsideCircle = (parentR, parentPosition, childR, childPosition, is
 
 // src/Tree.tsx
 var looseFilesId = "__structure_loose_file__";
-var width = 1e3;
-var height = 1e3;
+var width = 1e4;
+var height = 1e4;
 var maxChildren = 9e3;
 var lastCommitAccessor = (d2) => {
   var _a, _b;
